@@ -1,0 +1,35 @@
+# ── Python / Django ──────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+env/
+
+# Django secrets & generated files
+backend/.env
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+backend/faiss_indexes/
+backend/logs/
+
+# ── Node / React ─────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.production
+
+# ── OS & Editor ──────────────────────────────────
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

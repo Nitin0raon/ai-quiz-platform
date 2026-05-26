@@ -1,0 +1,261 @@
+### AI Quiz Platform - API Tests
+### Use with VS Code "REST Client" extension
+### Install: Extensions → search "REST Client" by Huachao Mao
+### Click "Send Request" above each request to test
+
+@baseUrl = http://127.0.0.1:8000/api/v1
+@contentType = application/json
+
+### =============================================
+### STEP 1: REGISTER A NEW USER
+### =============================================
+
+# @name register
+POST {{baseUrl}}/auth/register/
+Content-Type: {{contentType}}
+
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "first_name": "Test",
+    "last_name": "User",
+    "password": "MyPassword123!",
+    "password_confirm": "MyPassword123!"
+}
+
+###
+
+### =============================================
+### STEP 2: LOGIN
+### =============================================
+
+# @name login
+POST {{baseUrl}}/auth/login/
+Content-Type: {{contentType}}
+
+{
+    "email": "test@example.com",
+    "password": "MyPassword123!"
+}
+
+###
+
+# Copy the access token from the login response above
+# Paste it below replacing YOUR_ACCESS_TOKEN
+@token = YOUR_ACCESS_TOKEN_HERE
+
+### =============================================
+### STEP 3: GET PROFILE
+### =============================================
+
+GET {{baseUrl}}/auth/profile/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 4: REFRESH ACCESS TOKEN
+### =============================================
+
+# @name refresh
+POST {{baseUrl}}/auth/token/refresh/
+Content-Type: {{contentType}}
+
+{
+    "refresh": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+###
+
+### =============================================
+### STEP 5: LIST YOUR DOCUMENTS
+### =============================================
+
+GET {{baseUrl}}/documents/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 6: LIST YOUR QUIZZES
+### =============================================
+
+GET {{baseUrl}}/quizzes/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 7: GENERATE A QUIZ
+### (Replace document_id with your document's UUID)
+### =============================================
+
+POST {{baseUrl}}/quizzes/generate/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+    "document_id": "YOUR_DOCUMENT_UUID_HERE",
+    "topic": "main concepts",
+    "difficulty": "medium",
+    "num_questions": 5,
+    "title": "My First Quiz",
+    "time_limit_minutes": 10
+}
+
+###
+
+### =============================================
+### STEP 8: GET QUIZ (without answers)
+### =============================================
+
+GET {{baseUrl}}/quizzes/YOUR_QUIZ_UUID_HERE/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 9: GET QUIZ WITH ANSWERS (creator only)
+### =============================================
+
+GET {{baseUrl}}/quizzes/YOUR_QUIZ_UUID_HERE/?with_answers=true
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 10: SUBMIT QUIZ ANSWERS
+### =============================================
+
+POST {{baseUrl}}/quizzes/YOUR_QUIZ_UUID_HERE/submit/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+    "answers": [
+        {"question_id": "QUESTION_1_UUID", "selected_option": "A"},
+        {"question_id": "QUESTION_2_UUID", "selected_option": "B"},
+        {"question_id": "QUESTION_3_UUID", "selected_option": "C"},
+        {"question_id": "QUESTION_4_UUID", "selected_option": "D"},
+        {"question_id": "QUESTION_5_UUID", "selected_option": "A"}
+    ],
+    "time_taken_seconds": 180
+}
+
+###
+
+### =============================================
+### STEP 11: VIEW ATTEMPT HISTORY
+### =============================================
+
+GET {{baseUrl}}/quizzes/attempts/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 12: VIEW ANALYTICS DASHBOARD
+### =============================================
+
+GET {{baseUrl}}/analytics/dashboard/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 13: VIEW LEADERBOARD
+### =============================================
+
+GET {{baseUrl}}/analytics/leaderboard/
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 14: VIEW ACCURACY OVER TIME (last 30 days)
+### =============================================
+
+GET {{baseUrl}}/analytics/accuracy/?days=30
+Authorization: Bearer {{token}}
+
+###
+
+### =============================================
+### STEP 15: SEMANTIC SEARCH TEST
+### =============================================
+
+POST {{baseUrl}}/rag/search/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+    "document_id": "YOUR_DOCUMENT_UUID_HERE",
+    "query": "what is the main concept",
+    "top_k": 3
+}
+
+###
+
+### =============================================
+### STEP 16: LOGOUT
+### =============================================
+
+POST {{baseUrl}}/auth/logout/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+    "refresh_token": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+###
+
+### =============================================
+### STEP 17: CHANGE PASSWORD
+### =============================================
+
+POST {{baseUrl}}/auth/change-password/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+    "old_password": "MyPassword123!",
+    "new_password": "NewPassword456!",
+    "new_password_confirm": "NewPassword456!"
+}
+
+###
+
+### =============================================
+### FILTERING AND PAGINATION EXAMPLES
+### =============================================
+
+### List quizzes - page 2, 5 per page
+GET {{baseUrl}}/quizzes/?page=2&page_size=5
+Authorization: Bearer {{token}}
+
+###
+
+### List quizzes - only hard difficulty
+GET {{baseUrl}}/quizzes/?difficulty=hard
+Authorization: Bearer {{token}}
+
+###
+
+### Search quizzes by title/topic
+GET {{baseUrl}}/quizzes/?search=python
+Authorization: Bearer {{token}}
+
+###
+
+### List documents - only processed ones
+GET {{baseUrl}}/documents/?status=processed
+Authorization: Bearer {{token}}
+
+###
+
+### Attempt history - sorted by accuracy
+GET {{baseUrl}}/quizzes/attempts/?ordering=-accuracy
+Authorization: Bearer {{token}}
+
+###
