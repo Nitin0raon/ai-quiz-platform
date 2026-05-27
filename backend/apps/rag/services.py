@@ -61,7 +61,7 @@ class EmbeddingService:
             # Use LangChain wrapper for Gemini embeddings
             from langchain_google_genai import GoogleGenerativeAIEmbeddings
             self._model = GoogleGenerativeAIEmbeddings(
-                model="models/embedding-001",
+                model="models/embedding-004",
                 google_api_key=api_key
             )
         return self._model

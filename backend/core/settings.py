@@ -53,7 +53,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',                  # Django REST Framework
     'rest_framework_simplejwt',        # JWT Authentication
     'corsheaders',                     # CORS handling
-    'django_filters',                  # Filtering support
+    'django_filters',
+    'rest_framework_simplejwt.token_blacklist',                 # Filtering support
 ]
 
 LOCAL_APPS = [
@@ -62,7 +63,7 @@ LOCAL_APPS = [
     'apps.quizzes',      # Quiz generation & attempts
     'apps.rag',          # RAG pipeline
     'apps.analytics',    # Analytics & leaderboard
-    'apps.common',       # Shared utilities
+    'apps.common',      # Shared utilities
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -329,10 +330,15 @@ ALLOWED_DOCUMENT_TYPES = ['application/pdf']
 MAX_DOCUMENT_SIZE_MB = 10
 
 
+# # ============================================================
+# # GOOGLE GEMINI API
+# # ============================================================
+# GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+
 # ============================================================
-# GOOGLE GEMINI API
+# GROQ API (replaces Gemini for quiz generation)
 # ============================================================
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
 
 
 # ============================================================
