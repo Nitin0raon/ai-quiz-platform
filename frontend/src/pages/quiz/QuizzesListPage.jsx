@@ -30,7 +30,7 @@ export default function QuizzesListPage() {
     <div>
       <PageHeader
         title="Quizzes"
-        subtitle="Manage your AI-generated quizzes and view attempt history"
+        subtitle="Manage your quizzes and view attempt history"
         action={
           <Link to="/quizzes/generate" className="btn-primary">
             <Plus className="w-4 h-4" /> New Quiz

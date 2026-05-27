@@ -68,7 +68,7 @@ export default function LoginPage() {
           {[
             { label: 'Quizzes Generated', value: '50K+' },
             { label: 'Topics Covered', value: '200+' },
-            { label: 'Avg. Score Lift', value: '+34%' },
+            { label: 'Avg. Score Lift', value: '+35%' },
           ].map((s) => (
             <div key={s.label} className="bg-white/5 rounded-2xl p-4 backdrop-blur-sm border border-white/10">
               <p className="font-display text-2xl font-800 text-white">{s.value}</p>
