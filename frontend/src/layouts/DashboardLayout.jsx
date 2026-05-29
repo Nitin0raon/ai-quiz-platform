@@ -4,14 +4,16 @@ import { useAuth } from '../context/AuthContext'
 import {
   LayoutDashboard, FileText, Zap, BarChart2,
   User, LogOut, Menu, X, ChevronRight, Brain,
+  TrendingUp,   // ← add this
 } from 'lucide-react'
 
 const NAV = [
-  { to: '/dashboard',   label: 'Dashboard',  icon: LayoutDashboard },
-  { to: '/documents',   label: 'Documents',  icon: FileText },
-  { to: '/quizzes',     label: 'Quizzes',    icon: Zap },
-  { to: '/analytics',   label: 'Analytics',  icon: BarChart2 },
-  { to: '/profile',     label: 'Profile',    icon: User },
+  { to: '/home',      label: 'Home',      icon: LayoutDashboard },
+  { to: '/dashboard', label: 'Dashboard', icon: BarChart2 },
+  { to: '/documents', label: 'Documents', icon: FileText },
+  { to: '/quizzes',   label: 'Quizzes',   icon: Zap },
+  { to: '/analytics', label: 'Analytics', icon: TrendingUp },
+  { to: '/profile',   label: 'Profile',   icon: User },
 ]
 
 export default function DashboardLayout() {
@@ -20,9 +22,9 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
+  await logout()
+  navigate('/')   // ← was '/login'
+}
 
   const Sidebar = ({ mobile = false }) => (
     <aside className={`

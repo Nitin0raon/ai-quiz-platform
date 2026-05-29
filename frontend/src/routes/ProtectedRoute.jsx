@@ -15,6 +15,6 @@ export function ProtectedRoute({ children }) {
 /** Redirects authenticated users away from auth pages */
 export function PublicRoute({ children }) {
   const { isAuthenticated } = useAuth()
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />
+  if (isAuthenticated) return <Navigate to="/home" replace />
   return children
 }

@@ -8,6 +8,8 @@ import { ProtectedRoute, PublicRoute } from './routes/ProtectedRoute'
 
 import DashboardLayout  from './layouts/DashboardLayout'
 
+import LandingPage  from './pages/LandingPage'
+import HomePage     from './pages/dashboard/HomePage'
 // Auth pages
 import LoginPage    from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
@@ -64,6 +66,7 @@ export default function App() {
 
           <Routes>
             {/* ── Public routes (redirect to /dashboard if logged in) ── */}
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login"    element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
@@ -73,7 +76,7 @@ export default function App() {
               element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
             >
               {/* Default redirect */}
-              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="home" element={<HomePage />} />
 
               {/* Dashboard */}
               <Route path="dashboard"  element={<DashboardPage />} />
@@ -97,7 +100,7 @@ export default function App() {
             </Route>
 
             {/* Catch-all → dashboard */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
 
         </AuthProvider>

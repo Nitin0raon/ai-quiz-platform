@@ -41,7 +41,7 @@ export default function RegisterPage() {
     e.preventDefault()
     if (!validate()) return
     const result = await register(form)
-    if (result.success) navigate('/dashboard')
+    if (result.success) navigate('/home')
     else if (result.errors) setErrors(result.errors)
   }
 
