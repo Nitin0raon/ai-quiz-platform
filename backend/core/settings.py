@@ -30,7 +30,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'change-this-insecure-default-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS: Which domain names can access this server.
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1'
+).split(',')
 
 
 # ============================================================
@@ -50,11 +55,13 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework',                  # Django REST Framework
-    'rest_framework_simplejwt',        # JWT Authentication
-    'corsheaders',                     # CORS handling
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'django_filters',
-    'rest_framework_simplejwt.token_blacklist',                 # Filtering support
+    'cloudinary_storage',   # ← add this
+    'cloudinary',           # ← add this
 ]
 
 LOCAL_APPS = [
@@ -76,6 +83,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # CorsMiddleware MUST be before CommonMiddleware.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'corsheaders.middleware.CorsMiddleware',          # CORS - must be high up
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -116,19 +124,45 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # We use PostgreSQL because it's production-grade.
 # SQLite (Django default) is only for development/testing.
 # All credentials come from .env - never hardcode passwords!
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'ai_quiz_db'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'connect_timeout': 10,
-        },
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME', 'ai_quiz_db'),
+#         'USER': os.getenv('DB_USER', 'postgres'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', ''),
+#         'HOST': os.getenv('DB_HOST', 'localhost'),
+#         'PORT': os.getenv('DB_PORT', '5432'),
+#         'OPTIONS': {
+#             'connect_timeout': 10,
+#         },
+#     }
+# }
+
+import dj_database_url
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    # Production: use DATABASE_URL (Supabase/Railway/Render)
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    # Local development: use individual settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'ai_quiz_db'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 
 # ============================================================
@@ -163,13 +197,36 @@ USE_TZ = True
 # ============================================================
 # STATIC & MEDIA FILES
 # ============================================================
+# STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# ── STATIC FILES ─────────────────────────────────────────
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# MEDIA: User-uploaded files (PDFs, etc.)
-MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
-MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT', 'media')
+# # MEDIA: User-uploaded files (PDFs, etc.)
+# MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+# MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT', 'media')
 
+
+# ── MEDIA FILES ───────────────────────────────────────────
+# Local development: store locally
+# Production: store on Cloudinary
+CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
+
+if CLOUDINARY_URL:
+    import cloudinary
+    import cloudinary.uploader
+    import cloudinary.api
+
+    cloudinary.config(from_url=CLOUDINARY_URL)
+
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    MEDIA_URL = '/media/'
+else:
+    MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+    MEDIA_ROOT = BASE_DIR / os.getenv('MEDIA_ROOT', 'media')
 
 # ============================================================
 # DEFAULT PRIMARY KEY
@@ -346,3 +403,21 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
 # ============================================================
 # FAISS indexes are stored on disk for persistence
 FAISS_INDEX_PATH = BASE_DIR / 'faiss_indexes'
+
+
+# ── PRODUCTION SECURITY ───────────────────────────────────
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# ── CORS — update for production ──────────────────────────
+CORS_ALLOWED_ORIGINS = os.getenv(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+
+CORS_ALLOW_CREDENTIALS = True
