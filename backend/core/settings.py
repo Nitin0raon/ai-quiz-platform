@@ -298,10 +298,14 @@ SIMPLE_JWT = {
 # ============================================================
 # CORS allows your frontend (React, etc.) to call this API.
 # Without this, browsers block cross-origin requests.
-CORS_ALLOWED_ORIGINS = os.getenv(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000'
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:3000,http://127.0.0.1:3000'
+    ).split(',')
+    if origin.strip()
+]
 
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies/auth headers
 

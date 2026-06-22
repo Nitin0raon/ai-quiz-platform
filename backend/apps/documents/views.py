@@ -44,14 +44,34 @@ class DocumentUploadView(APIView):
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        document = serializer.save()
+        try:
+            document = serializer.save()
+        except Exception as e:
+            logger.exception(f"Failed to save uploaded document for user {request.user.email}: {e}")
+            return Response({
+                'success': False,
+                'message': 'Failed to save uploaded file. Check server logs for details.',
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         logger.info(f"Document uploaded: {document.id} by user: {request.user.email}")
 
         # Process the document (extract text, chunk, embed)
         # In production with Celery, this would be: process_document.delay(document.id)
         # For now, we process it immediately (synchronously)
-        pipeline_result = process_document_pipeline(document)
+        try:
+            pipeline_result = process_document_pipeline(document)
+        except Exception as e:
+            logger.exception(f"Document processing failed for {document.id}: {e}")
+            document.status = document.Status.FAILED
+            document.error_message = str(e)
+            document.save(update_fields=['status', 'error_message', 'updated_at'])
+            return Response({
+                'success': False,
+                'message': 'Document uploaded but processing failed. Check server logs for details.',
+                'error': str(e),
+                'document': DocumentDetailSerializer(document).data,
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         if pipeline_result['success']:
             message = (
