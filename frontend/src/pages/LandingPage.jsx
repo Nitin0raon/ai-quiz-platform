@@ -366,7 +366,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── PRICING ──────────────────────────────────────── */}
+      {/* ── PRICING ────────────────────────────────────────
       <section id="pricing" className="py-20 px-5 bg-surface-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
@@ -409,7 +409,7 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ── CTA ──────────────────────────────────────────── */}
       <section className="py-20 px-5 bg-brand-950 relative overflow-hidden">

@@ -4,13 +4,6 @@ import { useAuth } from '../../context/AuthContext'
 import { Brain, Eye, EyeOff, ArrowRight, Check } from 'lucide-react'
 import Spinner from '../../components/common/Spinner'
 
-const PERKS = [
-  'Upload unlimited study PDFs',
-  'Generate AI-powered MCQ quizzes',
-  'Track performance with analytics',
-  'Compete on the leaderboard',
-]
-
 function Field({
   name,
   label,
@@ -136,178 +129,147 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-50 flex">
-      {/* Left — branding */}
-      <div
-        className="hidden lg:flex lg:w-5/12 bg-gradient-to-br from-brand-950 via-brand-900 to-indigo-900
-        relative overflow-hidden flex-col justify-between p-12"
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-brand-50 px-4 py-10 relative overflow-hidden">
+    {/* Background Effects */}
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute top-0 left-0 w-96 h-96 bg-brand-200 rounded-full blur-3xl opacity-30" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-200 rounded-full blur-3xl opacity-30" />
+    </div>
+
+    {/* Home Button */}
+    <div className="absolute top-6 left-6 z-20">
+      <Link
+        to="/LandingPage"
+        className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-slate-200 rounded-xl shadow-md hover:shadow-lg hover:bg-white transition-all duration-200 text-slate-700 font-medium"
       >
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-brand-600/20 blur-3xl" />
-          <div className="absolute bottom-20 left-0 w-72 h-72 rounded-full bg-indigo-600/20 blur-3xl" />
-        </div>
+        Home
+      </Link>
+    </div>
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-2.5 mb-16">
-            <div className="w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center">
-              <Brain className="w-5 h-5 text-white" strokeWidth={2.5} />
-            </div>
-            <span className="font-display font-800 text-white text-xl">
-              QuizAI
-            </span>
+    {/* Register Card */}
+    <div className="relative z-10 w-full max-w-2xl">
+      <div className="bg-white/80 backdrop-blur-xl border border-white shadow-2xl rounded-3xl p-8 md:p-10">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-4">
+            <Brain className="w-8 h-8 text-white" />
           </div>
 
-          <h2 className="font-display text-3xl font-800 text-white leading-tight mb-3">
-            Your smartest
-            <br />
-            study partner
-          </h2>
-
-          <p className="text-brand-200 text-sm mb-10">
-            Join thousands of learners preparing smarter, not harder.
-          </p>
-
-          <div className="space-y-3">
-            {PERKS.map((perk) => (
-              <div key={perk} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-success-500/20 flex items-center justify-center flex-shrink-0">
-                  <Check
-                    className="w-3 h-3 text-success-400"
-                    strokeWidth={3}
-                  />
-                </div>
-                <span className="text-brand-100 text-sm">{perk}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <p className="relative z-10 text-brand-400 text-xs">
-          Free forever · No credit card required
-        </p>
-      </div>
-
-      {/* Right — form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-10 overflow-y-auto">
-        <div className="w-full max-w-lg animate-slide-up">
-          <div className="flex items-center gap-2 mb-6 lg:hidden">
-            <div className="w-8 h-8 bg-brand-600 rounded-xl flex items-center justify-center">
-              <Brain className="w-4 h-4 text-white" strokeWidth={2.5} />
-            </div>
-            <span className="font-display font-700 text-slate-900">
-              QuizAI
-            </span>
-          </div>
-
-          <h1 className="font-display text-2xl font-700 text-slate-900 mb-1">
-            Create your account
+          <h1 className="text-3xl font-bold text-slate-900">
+            Create Account
           </h1>
 
-          <p className="text-slate-500 text-sm mb-7">
+          <p className="text-slate-500 mt-2">
+            Start your AI-powered learning journey
+          </p>
+
+          <p className="text-sm text-slate-500 mt-3">
             Already have an account?{' '}
             <Link
               to="/login"
-              className="text-brand-600 font-medium hover:text-brand-700"
+              className="text-brand-600 font-semibold hover:text-brand-700"
             >
-              Sign in
+              Sign In
             </Link>
           </p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-4">
-              <Field
-                name="first_name"
-                label="First name"
-                placeholder="Alex"
-                half
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-
-              <Field
-                name="last_name"
-                label="Last name"
-                placeholder="Kim"
-                half
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-
-              <Field
-                name="username"
-                label="Username"
-                placeholder="alexkim"
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-
-              <Field
-                name="email"
-                label="Email address"
-                type="email"
-                placeholder="alex@example.com"
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-
-              <Field
-                name="password"
-                label="Password"
-                type="password"
-                placeholder="Min. 8 characters"
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-
-              <Field
-                name="password_confirm"
-                label="Confirm password"
-                type="password"
-                placeholder="Repeat password"
-                form={form}
-                errors={errors}
-                handleChange={handleChange}
-                showPw={showPw}
-                setShowPw={setShowPw}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary btn-lg w-full mt-6"
-            >
-              {loading ? (
-                <Spinner size="sm" />
-              ) : (
-                <>
-                  Create account
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          <p className="text-xs text-slate-400 text-center mt-6">
-            By creating an account, you agree to our Terms of Service.
-          </p>
         </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid md:grid-cols-2 gap-5">
+            <Field
+              name="first_name"
+              label="First Name"
+              placeholder="John"
+              half
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+
+            <Field
+              name="last_name"
+              label="Last Name"
+              placeholder="Doe"
+              half
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+
+            <Field
+              name="username"
+              label="Username"
+              placeholder="johndoe"
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+
+            <Field
+              name="email"
+              label="Email Address"
+              type="email"
+              placeholder="john@example.com"
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+
+            <Field
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="Minimum 8 characters"
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+
+            <Field
+              name="password_confirm"
+              label="Confirm Password"
+              type="password"
+              placeholder="Re-enter password"
+              form={form}
+              errors={errors}
+              handleChange={handleChange}
+              showPw={showPw}
+              setShowPw={setShowPw}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition flex items-center justify-center gap-2 shadow-lg mt-6"
+          >
+            {loading ? (
+              <Spinner size="sm" />
+            ) : (
+              <>
+                Create Account
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </form>
+
+        <p className="text-center text-xs text-slate-400 mt-6">
+          By creating an account, you agree to our Terms of Service and
+          Privacy Policy.
+        </p>
       </div>
     </div>
-  )
+  </div>
+)
 }

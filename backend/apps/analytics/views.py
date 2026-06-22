@@ -153,74 +153,74 @@ class UserDashboardView(APIView):
         }
 
 
-class LeaderboardView(APIView):
-    """
-    GET /api/v1/analytics/leaderboard/
-    Returns global leaderboard ranked by total points.
-    Cached for 10 minutes.
-    """
-    permission_classes = [IsAuthenticated]
+# class LeaderboardView(APIView):
+#     """
+#     GET /api/v1/analytics/leaderboard/
+#     Returns global leaderboard ranked by total points.
+#     Cached for 10 minutes.
+#     """
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        cache_key = 'global_leaderboard'
-        cached = cache.get(cache_key)
-        if cached:
-            return Response(cached)
+#     def get(self, request):
+#         cache_key = 'global_leaderboard'
+#         cached = cache.get(cache_key)
+#         if cached:
+#             return Response(cached)
 
-        # Get top 50 users by total_points
-        top_users = User.objects.filter(
-            is_active=True,
-            total_points__gt=0
-        ).order_by('-total_points')[:50].values(
-            'id', 'username', 'first_name', 'last_name',
-            'total_points', 'streak_days'
-        )
+#         # Get top 50 users by total_points
+#         top_users = User.objects.filter(
+#             is_active=True,
+#             total_points__gt=0
+#         ).order_by('-total_points')[:50].values(
+#             'id', 'username', 'first_name', 'last_name',
+#             'total_points', 'streak_days'
+#         )
 
-        leaderboard = []
-        for rank, user_data in enumerate(top_users, start=1):
-            # Get their quiz stats
-            user_attempts = QuizAttempt.objects.filter(
-                user_id=user_data['id'],
-                status=QuizAttempt.AttemptStatus.COMPLETED
-            )
-            stats = user_attempts.aggregate(
-                total_quizzes=Count('id'),
-                avg_accuracy=Avg('accuracy'),
-            )
+#         leaderboard = []
+#         for rank, user_data in enumerate(top_users, start=1):
+#             # Get their quiz stats
+#             user_attempts = QuizAttempt.objects.filter(
+#                 user_id=user_data['id'],
+#                 status=QuizAttempt.AttemptStatus.COMPLETED
+#             )
+#             stats = user_attempts.aggregate(
+#                 total_quizzes=Count('id'),
+#                 avg_accuracy=Avg('accuracy'),
+#             )
 
-            full_name = f"{user_data['first_name']} {user_data['last_name']}".strip()
+#             full_name = f"{user_data['first_name']} {user_data['last_name']}".strip()
 
-            leaderboard.append({
-                'rank': rank,
-                'username': user_data['username'],
-                'display_name': full_name or user_data['username'],
-                'total_points': user_data['total_points'],
-                'streak_days': user_data['streak_days'],
-                'total_quizzes': stats['total_quizzes'] or 0,
-                'avg_accuracy': round(stats['avg_accuracy'] or 0, 2),
-            })
+#             leaderboard.append({
+#                 'rank': rank,
+#                 'username': user_data['username'],
+#                 'display_name': full_name or user_data['username'],
+#                 'total_points': user_data['total_points'],
+#                 'streak_days': user_data['streak_days'],
+#                 'total_quizzes': stats['total_quizzes'] or 0,
+#                 'avg_accuracy': round(stats['avg_accuracy'] or 0, 2),
+#             })
 
-        # Find current user's rank
-        current_user_rank = self._get_user_rank(request.user)
+#         # Find current user's rank
+#         current_user_rank = self._get_user_rank(request.user)
 
-        data = {
-            'success': True,
-            'leaderboard': leaderboard,
-            'your_rank': current_user_rank,
-            'your_points': request.user.total_points,
-        }
+#         data = {
+#             'success': True,
+#             'leaderboard': leaderboard,
+#             'your_rank': current_user_rank,
+#             'your_points': request.user.total_points,
+#         }
 
-        cache.set(cache_key, data, 600)  # Cache 10 minutes
+#         cache.set(cache_key, data, 600)  # Cache 10 minutes
 
-        return Response(data)
+#         return Response(data)
 
-    def _get_user_rank(self, user):
-        """Calculate user's rank among all users."""
-        users_above = User.objects.filter(
-            total_points__gt=user.total_points,
-            is_active=True
-        ).count()
-        return users_above + 1
+#     def _get_user_rank(self, user):
+#         """Calculate user's rank among all users."""
+#         users_above = User.objects.filter(
+#             total_points__gt=user.total_points,
+#             is_active=True
+#         ).count()
+#         return users_above + 1
 
 
 class AccuracyAnalyticsView(APIView):

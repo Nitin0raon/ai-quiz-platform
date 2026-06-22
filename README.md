@@ -10,7 +10,7 @@ An AI-powered quiz and interview preparation platform.
 ## Features
 
 - 📄 Upload PDFs and extract text automatically
-- 🤖 Generate MCQ quizzes with Google Gemini AI (RAG pipeline)
+- 🤖 Generate MCQ quizzes with Groq AI (RAG pipeline)
 - ⏱️ Timed quiz interface with question navigation
 - 📊 Analytics dashboard with charts and leaderboard
 - 🔐 JWT authentication with auto token refresh

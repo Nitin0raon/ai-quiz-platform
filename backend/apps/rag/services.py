@@ -50,19 +50,10 @@ class EmbeddingService:
     def _get_model(self):
         """Lazy-load the embedding model."""
         if self._model is None:
-            import google.generativeai as genai
-            api_key = settings.GEMINI_API_KEY
-            if not api_key:
-                raise ValueError(
-                    "GEMINI_API_KEY is not set. Please add it to your .env file."
-                )
-            genai.configure(api_key=api_key)
+            from langchain_huggingface import HuggingFaceEmbeddings
 
-            # Use LangChain wrapper for Gemini embeddings
-            from langchain_google_genai import GoogleGenerativeAIEmbeddings
-            self._model = GoogleGenerativeAIEmbeddings(
-                model="models/embedding-004",
-                google_api_key=api_key
+            self._model = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2"
             )
         return self._model
 

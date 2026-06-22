@@ -11,10 +11,10 @@ import { formatDate, formatTime, accuracyBg } from '../../utils/helpers'
 
 function StatCard({ icon: Icon, label, value, sub, color = 'brand' }) {
   const colors = {
-    brand:   'bg-brand-50 text-brand-600',
-    orange:  'bg-orange-50 text-orange-500',
-    green:   'bg-green-50 text-green-600',
-    purple:  'bg-purple-50 text-purple-600',
+    brand: 'bg-brand-50 text-brand-600',
+    orange: 'bg-orange-50 text-orange-500',
+    green: 'bg-green-50 text-green-600',
+    purple: 'bg-purple-50 text-purple-600',
   }
   return (
     <div className="card p-5 flex items-start gap-4 hover:shadow-card-hover transition-shadow">
@@ -22,7 +22,9 @@ function StatCard({ icon: Icon, label, value, sub, color = 'brand' }) {
         <Icon className="w-5 h-5" />
       </div>
       <div>
-        <p className="text-2xl font-display font-700 text-slate-900">{value}</p>
+        <p className="text-4xl font-black tracking-tight text-slate-900 leading-none tabular-nums">
+          {value}
+        </p>
         <p className="text-sm font-medium text-slate-700">{label}</p>
         {sub && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
       </div>
@@ -39,7 +41,7 @@ export default function DashboardPage() {
   })
 
   const summary = data?.summary || {}
-  const recent  = data?.recent_attempts || []
+  const recent = data?.recent_attempts || []
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
@@ -49,7 +51,7 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div className="mb-8">
         <h1 className="font-display text-2xl font-700 text-slate-900">
-          {greeting}, {user?.first_name || user?.username} 👋
+          {greeting}, {user?.first_name || user?.username}
         </h1>
         <p className="text-slate-500 text-sm mt-0.5">
           Here's your study progress at a glance.
@@ -73,10 +75,10 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard icon={Zap}       label="Quizzes Taken"   value={summary.total_quizzes_taken || 0}    color="brand"  />
-          <StatCard icon={Target}    label="Avg. Accuracy"   value={`${summary.average_accuracy || 0}%`} color="green"  sub="across all quizzes" />
-          <StatCard icon={Trophy}    label="Total Points"    value={data?.user?.total_points || 0}        color="orange" />
-          <StatCard icon={Flame}     label="Day Streak"      value={`${data?.user?.streak_days || 0}d`}  color="purple" sub="keep it up!" />
+          <StatCard icon={Zap} label="Quizzes Taken" value={summary.total_quizzes_taken || 0} color="brand" />
+          <StatCard icon={Target} label="Avg. Accuracy" value={`${summary.average_accuracy || 0}%`} color="green" sub="across all quizzes" />
+          <StatCard icon={Trophy} label="Total Points" value={data?.user?.total_points || 0} color="orange" />
+          <StatCard icon={Flame} label="Day Streak" value={`${data?.user?.streak_days || 0}d`} color="purple" sub="keep it up!" />
         </div>
       )}
 
@@ -113,10 +115,9 @@ export default function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-slate-800 text-sm truncate">{a.quiz__title}</p>
                     <div className="flex items-center gap-3 mt-0.5">
-                      <span className={`badge ${
-                        a.quiz__difficulty === 'easy' ? 'badge-easy' :
-                        a.quiz__difficulty === 'medium' ? 'badge-medium' : 'badge-hard'
-                      }`}>{a.quiz__difficulty}</span>
+                      <span className={`badge ${a.quiz__difficulty === 'easy' ? 'badge-easy' :
+                          a.quiz__difficulty === 'medium' ? 'badge-medium' : 'badge-hard'
+                        }`}>{a.quiz__difficulty}</span>
                       <span className="text-xs text-slate-400 flex items-center gap-1">
                         <Clock className="w-3 h-3" /> {formatTime(a.time_taken_seconds)}
                       </span>
