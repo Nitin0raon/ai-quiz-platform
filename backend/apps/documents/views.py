@@ -45,6 +45,16 @@ class DocumentUploadView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # Preserve the uploaded file bytes so processing can use them
+            uploaded_file = request.FILES.get('file')
+            uploaded_bytes = None
+            try:
+                uploaded_file.seek(0)
+                uploaded_bytes = uploaded_file.read()
+                uploaded_file.seek(0)
+            except Exception:
+                uploaded_bytes = None
+
             document = serializer.save()
         except Exception as e:
             logger.exception(f"Failed to save uploaded document for user {request.user.email}: {e}")
@@ -60,7 +70,7 @@ class DocumentUploadView(APIView):
         # In production with Celery, this would be: process_document.delay(document.id)
         # For now, we process it immediately (synchronously)
         try:
-            pipeline_result = process_document_pipeline(document)
+            pipeline_result = process_document_pipeline(document, file_bytes=uploaded_bytes)
         except Exception as e:
             logger.exception(f"Document processing failed for {document.id}: {e}")
             document.status = document.Status.FAILED

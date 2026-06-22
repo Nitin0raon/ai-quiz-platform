@@ -17,18 +17,23 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 // Create a configured Axios instance
 const api = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
-  headers: { 'Content-Type': 'application/json' },
   timeout: 30000, // 30 second timeout
 })
 
 // ── REQUEST INTERCEPTOR ──────────────────────────────────────
-// Runs before EVERY request. Adds the JWT access token.
+// Runs before EVERY request. Adds the JWT access token and JSON content type.
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    // Only set JSON content type when the request body is not FormData.
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json'
+    }
+
     return config
   },
   (error) => Promise.reject(error)
